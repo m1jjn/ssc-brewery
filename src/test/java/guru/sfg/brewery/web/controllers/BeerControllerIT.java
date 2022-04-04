@@ -41,19 +41,38 @@ public class BeerControllerIT extends BaseIT{
     @Test
     void findBeers() throws Exception{
         mockMvc.perform(get("/beers/find"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findBeersWithAnonymous() throws Exception{
+        mockMvc.perform(get("/beers/find").with(anonymous()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findBeersWithScott() throws Exception{
+        mockMvc.perform(get("/beers/find").with(httpBasic("scott", "tiger")))
                 .andExpect(status().isOk())
                 .andExpect(view().name("beers/findBeers"))
                 .andExpect(model().attributeExists("beer"));
     }
 
     @Test
-    void findBeersWithAnonymous() throws Exception{
-        mockMvc.perform(get("/beers/find").with(anonymous()))
+    void findBeersWithUser() throws Exception{
+        mockMvc.perform(get("/beers/find").with(httpBasic("user", "password")))
                 .andExpect(status().isOk())
                 .andExpect(view().name("beers/findBeers"))
                 .andExpect(model().attributeExists("beer"));
     }
 
+    @Test
+    void findBeersWithSpring() throws Exception{
+        mockMvc.perform(get("/beers/find").with(httpBasic("spring", "guru")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("beers/findBeers"))
+                .andExpect(model().attributeExists("beer"));
+    }
 
 
 
